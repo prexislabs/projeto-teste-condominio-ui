@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setPageTitle } from '../features/common/headerSlice'
-import Config from './Config'
-import Operations from './Operations'
 
 function Admin(){
 
@@ -31,11 +29,6 @@ function Admin(){
                 {/* <button className={`mx-2 hover:border-b-4 duration-100 p-2 rounded-lg text-xl ${ currentPage == 'operations' ? 'border-b-4 border-blue-500' : ''}`} onClick={() => setCurrentPage('operations')}>Operations</button>
                 <button className={`mx-2 hover:border-b-4 duration-100 p-2 rounded-lg text-xl ${ currentPage == 'config' ? 'border-b-4 border-blue-500' : ''}`} onClick={() => setCurrentPage('config')}>Config</button> */}
             </div>
-            {
-                currentPage == 'operations' ? <Operations/>:
-                currentPage == 'config' ? <Config/> :
-                null
-            }
         </div>
     )
 }
