@@ -9,7 +9,6 @@ import { RIGHT_DRAWER_TYPES } from '../utils/globalConstantUtil'
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ethers } from 'ethers'
 
-import InfinityHashTokenAbi from '../../src/abi/InfinityHashToken.json'
 import { useAccount, useProvider } from 'wagmi'
 import { AlertSuccess } from '../functions/Sweetalerts'
 import { setUserBalance } from '../features/common/headerSlice'
