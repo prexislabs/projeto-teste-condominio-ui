@@ -54,5 +54,8 @@ export function getErrors(error){
     if(error.includes('Votante invalido')){
         return AlertFail('Votante invalido', '')
     }
+    if(error.includes('Endereco invalido')){
+        return AlertFail('Endereco invalido', '')
+    }
 
 }
