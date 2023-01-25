@@ -19,11 +19,10 @@ export const AlertWarning = (Title = 'Atenção', message = '') => Swal.fire(
   )
 
 export const AlertInfo = (Title = 'Aviso', message = '') => Swal.fire(
-    'Good job!',
-    'You clicked the button!',
+    Title,
+    message,
     'info'
 )
-
 
 export const AlertLoading = (Title = 'Loading, please wait...') => Swal.fire({
     title: Title,
