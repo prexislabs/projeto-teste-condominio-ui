@@ -4,17 +4,24 @@ import { lazy } from 'react'
 
 const Condominio = lazy(() => import('../pages/Condominio'))
 const Pleitos = lazy(() => import('../pages/Pleitos'))
-const Admin = lazy(() => import('../pages/Admin'))
+
+const Sindico = lazy(() => import('../pages/Sindico'))
+const Morador = lazy(() => import('../pages/Morador'))
+const Autorizado = lazy(() => import('../pages/Autorizado'))
 
 
 const routes = [
   {
-    path: '/condominio',
-    component: Condominio
+    path: '/sindico',
+    component: Sindico
   },
   {
-    path: '/pleitos',
-    component: Pleitos
+    path: '/morador',
+    component: Morador
+  },
+  {
+    path: '/autorizado',
+    component: Autorizado
   },
 ]
 
