@@ -20,6 +20,8 @@ function User() {
   const { data: signer, isError, isLoading } = useSigner();
   const dispatch = useDispatch();
 
+  const [view, setView] = useState('morador');
+
   useEffect(() => {
     dispatch(setPageTitle({ title: "Condominio" }));
   }, []);
@@ -226,153 +228,242 @@ function User() {
     }
   }
 
+
+  function changeView(view){
+    setView(view)
+  }
+
   return (
+
     <div className="pt-2 pl-8">
-      <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
-        <p>Retornar Votante</p>
-        <form className="flex flex-col" onSubmit={(e) => retornarVotante(e)}>
-          <input
-            type="text"
-            name="votante"
-            placeholder="Votante"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <button className="btn mt-2">Ver votante</button>
-        </form>
-      </div>
 
-      <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
-        <p>Sindico</p>
-        <form className="flex flex-col" onSubmit={(e) => sindico(e)}>
-          <button className="btn mt-2">Ver Sindico</button>
-        </form>
-      </div>
-
-      <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
-        <p>Unidades</p>
-        <form className="flex flex-col" onSubmit={(e) => unidades(e)}>
-          <input
-            type="text"
-            name="unidades"
-            placeholder="Unidades"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <button className="btn mt-2">Ver unidades</button>
-        </form>
-      </div>
-
-      <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
-        <p>Adicionar unidade</p>
-        <form className="flex flex-col" onSubmit={(e) => adicionarUnidade(e)}>
-          <input
-            type="text"
-            name="unidade"
-            placeholder="Unidade"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <input
-            type="text"
-            name="morador"
-            placeholder="Morador"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <button className="btn mt-2">Adicionar</button>
-        </form>
-      </div>
-
-      <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
-        <p>Atualizar Morador</p>
-        <form className="flex flex-col" onSubmit={(e) => atualizarMorador(e)}>
-          <input
-            type="text"
-            name="unidade"
-            placeholder="Unidade"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <input
-            type="text"
-            name="morador"
-            placeholder="Morador"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <button className="btn mt-2">Atualizar</button>
-        </form>
-      </div>
-
-      <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
-        <p>Autorizar Endereço</p>
-        <form className="flex flex-col" onSubmit={(e) => autorizarEndereco(e)}>
-          <input
-            type="text"
-            name="unidade"
-            placeholder="Unidade"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <input
-            type="text"
-            name="autorizado"
-            placeholder="Morador"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <button className="btn mt-2">Autorizar</button>
-        </form>
-      </div>
-
-      <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
-        <p>Desautorizar Endereço</p>
-        <form
-          className="flex flex-col"
-          onSubmit={(e) => desautorizarEndereco(e)}
-        >
-          <input
-            type="text"
-            name="unidade"
-            placeholder="Unidade"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <button className="btn mt-2">Desautorizar</button>
-        </form>
-      </div>
-
-      <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
-        <p>Desautorizar-se</p>
-        <form className="flex flex-col" onSubmit={(e) => desautorizarSe(e)}>
-          <input
-            type="text"
-            name="unidade"
-            placeholder="Unidade"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <button className="btn mt-2">Desautorizar</button>
-        </form>
-      </div>
-
-      <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
-        <p>Mudar sindico</p>
-        <form className="flex flex-col" onSubmit={(e) => mudarSindico(e)}>
-          <input
-            type="text"
-            name="novoSindico"
-            placeholder="Novo sindico"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <button className="btn mt-2">Mudar</button>
-        </form>
-      </div>
-
-      <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
-        <p>Remover Unidade</p>
-        <form className="flex flex-col" onSubmit={(e) => removerUnidade(e)}>
-          <input
-            type="text"
-            name="unidade"
-            placeholder="Unidade"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <button className="btn mt-2">Remover</button>
-        </form>
-      </div>
+      {/* Navbar */}
+    <div className="navbar bg-base-100 rounded-lg flex">
+      <a className={`${view == 'morador' ? 'bg-gray-300' : null} mx-3 btn btn-ghost normal-case text-xl`} onClick={() => changeView('morador')}>Morador</a>
+      <a className={`${view == 'sindico' ? 'bg-gray-300' : null} mx-3 btn btn-ghost normal-case text-xl`} onClick={() => changeView('sindico')}>Sindico</a>
+      <a className={`${view == 'autorizado' ? 'bg-gray-300' : null} mx-3 btn btn-ghost normal-case text-xl`} onClick={() => changeView('autorizado')}>Autorizado</a>
     </div>
+
+      {
+        view == 'morador' ? (
+          <>
+            
+
+            <div className="grid gap-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-2">
+
+              <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+                <p>Retornar Votante</p>
+                <form className="flex flex-col" onSubmit={(e) => retornarVotante(e)}>
+                  <input
+                    type="text"
+                    name="votante"
+                    placeholder="Votante"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <button className="btn mt-2">Ver votante</button>
+                </form>
+              </div>
+
+              <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+                <p>Autorizar Endereço</p>
+                <form className="flex flex-col" onSubmit={(e) => autorizarEndereco(e)}>
+                  <input
+                    type="text"
+                    name="unidade"
+                    placeholder="Unidade"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <input
+                    type="text"
+                    name="autorizado"
+                    placeholder="Morador"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <button className="btn mt-2">Autorizar</button>
+                </form>
+              </div>
+
+              <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+                <p>Desautorizar Endereço</p>
+                <form
+                  className="flex flex-col"
+                  onSubmit={(e) => desautorizarEndereco(e)}
+                >
+                  <input
+                    type="text"
+                    name="unidade"
+                    placeholder="Unidade"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <button className="btn mt-2">Desautorizar</button>
+                </form>
+              </div>
+
+              <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+                <p>Sindico</p>
+                <form className="flex flex-col" onSubmit={(e) => sindico(e)}>
+                  <button className="btn mt-2">Ver Sindico</button>
+                </form>
+              </div>
+
+              <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+                <p>Unidades</p>
+                <form className="flex flex-col" onSubmit={(e) => unidades(e)}>
+                  <input
+                    type="text"
+                    name="unidades"
+                    placeholder="Unidades"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <button className="btn mt-2">Ver unidades</button>
+                </form>
+              </div>
+
+            </div>
+
+
+
+          </>
+        ) : 
+        view == 'sindico' ? (
+          <>
+
+          <div className="grid gap-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-2">
+           
+              <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+                <p>Mudar sindico</p>
+                <form className="flex flex-col" onSubmit={(e) => mudarSindico(e)}>
+                  <input
+                    type="text"
+                    name="novoSindico"
+                    placeholder="Novo sindico"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <button className="btn mt-2">Mudar</button>
+                </form>
+              </div>
+
+              <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+                <p>Adicionar unidade</p>
+                <form className="flex flex-col" onSubmit={(e) => adicionarUnidade(e)}>
+                  <input
+                    type="text"
+                    name="unidade"
+                    placeholder="Unidade"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <input
+                    type="text"
+                    name="morador"
+                    placeholder="Morador"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <button className="btn mt-2">Adicionar</button>
+                </form>
+              </div>
+
+              <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+                <p>Atualizar Morador</p>
+                <form className="flex flex-col" onSubmit={(e) => atualizarMorador(e)}>
+                  <input
+                    type="text"
+                    name="unidade"
+                    placeholder="Unidade"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <input
+                    type="text"
+                    name="morador"
+                    placeholder="Morador"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <button className="btn mt-2">Atualizar</button>
+                </form>
+              </div>
+
+              <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+                <p>Remover Unidade</p>
+                <form className="flex flex-col" onSubmit={(e) => removerUnidade(e)}>
+                  <input
+                    type="text"
+                    name="unidade"
+                    placeholder="Unidade"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <button className="btn mt-2">Remover</button>
+                </form>
+              </div>
+
+              <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+                <p>Unidades</p>
+                <form className="flex flex-col" onSubmit={(e) => unidades(e)}>
+                  <input
+                    type="text"
+                    name="unidades"
+                    placeholder="Unidades"
+                    className="my-2 input input-bordered w-full max-w-xs"
+                  />
+                  <button className="btn mt-2">Ver unidades</button>
+                </form>
+              </div>
+
+          </div>  
+
+
+          </>
+        ) :
+        view == 'autorizado' ? (
+          <>            
+
+            <div className="grid gap-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-2">
+
+
+            <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+              <p>Desautorizar-se</p>
+              <form className="flex flex-col" onSubmit={(e) => desautorizarSe(e)}>
+                <input
+                  type="text"
+                  name="unidade"
+                  placeholder="Unidade"
+                  className="my-2 input input-bordered w-full max-w-xs"
+                />
+                <button className="btn mt-2">Desautorizar</button>
+              </form>
+            </div> 
+
+            <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+              <p>Sindico</p>
+              <form className="flex flex-col" onSubmit={(e) => sindico(e)}>
+                <button className="btn mt-2">Ver Sindico</button>
+              </form>
+            </div>
+
+            <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+              <p>Unidades</p>
+              <form className="flex flex-col" onSubmit={(e) => unidades(e)}>
+                <input
+                  type="text"
+                  name="unidades"
+                  placeholder="Unidades"
+                  className="my-2 input input-bordered w-full max-w-xs"
+                />
+                <button className="btn mt-2">Ver unidades</button>
+              </form>
+            </div>
+
+            </div>
+
+
+          </>
+        ) :
+        null
+      }
+
+
+
+
+    </div>
+
   );
 }
 
