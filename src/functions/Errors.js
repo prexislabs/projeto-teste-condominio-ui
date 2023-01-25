@@ -33,6 +33,26 @@ export function getErrors(error){
     if(error.includes('Somente autorizado')){
         return AlertFail('Somente autorizado', '')
     }
-    return AlertFail('Erro interno', '')
+    if(error.includes('Pleito sem votos')){
+        return AlertFail('Pleito sem votos', '')
+    }
+    if(error.includes('Pleito ainda nao encerrado')){
+        return AlertFail('Pleito ainda nao encerrado', '')
+    }
+    if(error.includes('Titulo invalido')){
+        return AlertFail('Titulo invalido', '')
+    }
+    if(error.includes('Data limite invalida')){
+        return AlertFail('Data limite invalida', '')
+    }
+    if(error.includes('Pleito encerrado')){
+        return AlertFail('Pleito encerrado', '')
+    }
+    if(error.includes('Unidade ja votou')){
+        return AlertFail('Unidade ja votou', '')
+    }
+    if(error.includes('Votante invalido')){
+        return AlertFail('Votante invalido', '')
+    }
 
 }
