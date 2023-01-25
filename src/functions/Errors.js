@@ -25,10 +25,10 @@ export function getErrors(error){
         return AlertFail('Endereço inválido', '')
     }
     if(error.includes('Morador nao pode se autorizar')){
-        return AlertFail('Morador nao pode se autorizar', '')
+        return AlertFail('Morador não pode se autorizar', '')
     }
     if(error.includes('Endereco ja autorizado')){
-        return AlertFail('Endereco ja autorizado', '')
+        return AlertFail('Endereco já autorizado', '')
     }
     if(error.includes('Somente autorizado')){
         return AlertFail('Somente autorizado', '')
@@ -37,25 +37,28 @@ export function getErrors(error){
         return AlertFail('Pleito sem votos', '')
     }
     if(error.includes('Pleito ainda nao encerrado')){
-        return AlertFail('Pleito ainda nao encerrado', '')
+        return AlertFail('Pleito ainda não encerrado', '')
     }
     if(error.includes('Titulo invalido')){
-        return AlertFail('Titulo invalido', '')
+        return AlertFail('Titulo inválido', '')
     }
     if(error.includes('Data limite invalida')){
-        return AlertFail('Data limite invalida', '')
+        return AlertFail('Data limite inválida', '')
     }
     if(error.includes('Pleito encerrado')){
         return AlertFail('Pleito encerrado', '')
     }
     if(error.includes('Unidade ja votou')){
-        return AlertFail('Unidade ja votou', '')
+        return AlertFail('Unidade já votou', '')
     }
     if(error.includes('Votante invalido')){
-        return AlertFail('Votante invalido', '')
+        return AlertFail('Votante inválido', '')
     }
     if(error.includes('Endereco invalido')){
-        return AlertFail('Endereco invalido', '')
+        return AlertFail('Endereço invalido', '')
+    }
+    if(error.includes('resolver or addr is not configured for ENS name')){
+        return AlertFail('Endereço inválido', '')
     }
 
 }
