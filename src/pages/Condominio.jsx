@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 import { useAccount, useProvider, useSigner } from "wagmi";
 
 import condominioAbi from "../abi/condominio.json";
+import { AlertInfo, AlertLoading, AlertSuccess } from "../functions/Sweetalerts";
 
 function User() {
   // Hooks
@@ -30,7 +31,11 @@ function User() {
       e.target.unidade.value,
       e.target.morador.value
     );
+    AlertLoading('Adicionando...')
     const resWait = await res.wait();
+    if(resWait.status == 1){
+      AlertSuccess('Adicionado ', '')
+    }
     console.log(resWait.status);
   }
 
@@ -45,7 +50,11 @@ function User() {
       e.target.unidade.value,
       e.target.morador.value
     );
+    AlertLoading('Atualizando...')
     const resWait = await res.wait();
+    if(resWait.status == 1){
+      AlertSuccess('Atualizado ', '')
+    }
     console.log(resWait.status);
   }
 
@@ -60,7 +69,11 @@ function User() {
       e.target.unidade.value,
       e.target.autorizado.value
     );
+    AlertLoading('Autorizando...')
     const resWait = await res.wait();
+    if(resWait.status == 1){
+      AlertSuccess('Autorizado')
+    }
     console.log(resWait.status);
   }
 
@@ -72,7 +85,11 @@ function User() {
       signer
     );
     const res = await contract.desautorizarEndereco(e.target.unidade.value);
+    AlertLoading('Desautorizando')
     const resWait = await res.wait();
+    if(resWait.status == 1){
+      AlertSuccess('Desautorizado', '')
+    }
     console.log(resWait.status);
   }
 
@@ -84,7 +101,11 @@ function User() {
       signer
     );
     const res = await contract.desautorizarSe(e.target.unidade.value);
+    AlertLoading('Desautorizando-se')
     const resWait = await res.wait();
+    if(resWait.status == 1){
+      AlertSuccess('Desautorizado')
+    }
     console.log(resWait.status);
   }
 
@@ -96,7 +117,11 @@ function User() {
       signer
     );
     const res = await contract.mudarSindico(e.target.novoSindico.value);
+    AlertLoading('Mudando sindico...')
     const resWait = await res.wait();
+    if(resWait.status == 1){
+     AlertSuccess('Novo sindico adicionado')
+    }
     console.log(resWait.status);
   }
 
@@ -108,7 +133,11 @@ function User() {
       signer
     );
     const res = await contract.removerUnidade(e.target.unidade.value);
+    AlertLoading('Removendo...')
     const resWait = await res.wait();
+    if(resWait.status == 1){
+      AlertSuccess('Removido')
+    }
     console.log(resWait.status);
   }
 
@@ -121,7 +150,8 @@ function User() {
       condominioAbi,
       signer
     );
-    const res = await contract.retornarVotante(e.target.votante.value);
+    const res = await contract.retornaVotante(e.target.votante.value);
+    AlertInfo('Votante', res)
     console.log(res);
   }
 
@@ -133,6 +163,7 @@ function User() {
       signer
     );
     const res = await contract.sindico();
+    AlertInfo('Sindico', res)
     console.log(res);
   }
 
@@ -144,6 +175,14 @@ function User() {
       signer
     );
     const res = await contract.unidades(e.target.unidades.value);
+    AlertInfo('Unidades',
+    `
+    <div className="flex flex-col text-left">
+      <p>Morador: ${res[0]}</p>
+      <p>Autorizado: ${res[1]}</p>
+    </div>
+    `
+    )
     console.log(res);
   }
 
@@ -152,11 +191,11 @@ function User() {
 
       <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
         <p>Retornar Votante</p>
-        <form className="flex flex-col" onSubmit={(e) => autorizarEndereco(e)}>
+        <form className="flex flex-col" onSubmit={(e) => retornarVotante(e)}>
           <input
             type="text"
-            name="unidade"
-            placeholder="Unidade"
+            name="votante"
+            placeholder="Votante"
             className="my-2 input input-bordered w-full max-w-xs"
           />
           <button className="btn mt-2">Ver votante</button>
@@ -165,24 +204,18 @@ function User() {
 
       <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
         <p>Sindico</p>
-        <form className="flex flex-col" onSubmit={(e) => autorizarEndereco(e)}>
-          <input
-            type="text"
-            name="unidade"
-            placeholder="Unidade"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <button className="btn mt-2">Sindico</button>
+        <form className="flex flex-col" onSubmit={(e) => sindico(e)}>
+          <button className="btn mt-2">Ver Sindico</button>
         </form>
       </div>
 
       <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
         <p>Unidades</p>
-        <form className="flex flex-col" onSubmit={(e) => autorizarEndereco(e)}>
+        <form className="flex flex-col" onSubmit={(e) => unidades(e)}>
           <input
             type="text"
-            name="unidade"
-            placeholder="Unidade"
+            name="unidades"
+            placeholder="Unidades"
             className="my-2 input input-bordered w-full max-w-xs"
           />
           <button className="btn mt-2">Ver unidades</button>
@@ -238,7 +271,7 @@ function User() {
           />
           <input
             type="text"
-            name="morador"
+            name="autorizado"
             placeholder="Morador"
             className="my-2 input input-bordered w-full max-w-xs"
           />
@@ -255,12 +288,6 @@ function User() {
             placeholder="Unidade"
             className="my-2 input input-bordered w-full max-w-xs"
           />
-          <input
-            type="text"
-            name="morador"
-            placeholder="Morador"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
           <button className="btn mt-2">Desautorizar</button>
         </form>
       </div>
@@ -274,12 +301,6 @@ function User() {
             placeholder="Unidade"
             className="my-2 input input-bordered w-full max-w-xs"
           />
-          <input
-            type="text"
-            name="morador"
-            placeholder="Morador"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
           <button className="btn mt-2">Desautorizar</button>
         </form>
       </div>
@@ -289,14 +310,8 @@ function User() {
         <form className="flex flex-col" onSubmit={(e) => mudarSindico(e)}>
           <input
             type="text"
-            name="unidade"
-            placeholder="Unidade"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <input
-            type="text"
-            name="morador"
-            placeholder="Morador"
+            name="novoSindico"
+            placeholder="Novo sindico"
             className="my-2 input input-bordered w-full max-w-xs"
           />
           <button className="btn mt-2">Mudar</button>
@@ -310,12 +325,6 @@ function User() {
             type="text"
             name="unidade"
             placeholder="Unidade"
-            className="my-2 input input-bordered w-full max-w-xs"
-          />
-          <input
-            type="text"
-            name="morador"
-            placeholder="Morador"
             className="my-2 input input-bordered w-full max-w-xs"
           />
           <button className="btn mt-2">Remover</button>
