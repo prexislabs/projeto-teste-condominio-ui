@@ -114,7 +114,7 @@ function App() {
           <RainbowKitProvider chains={chains} modalSize="compact" avatar={CustomAvatar}>
           <Routes>          
             <Route path="/app/*" element={<Layout />} />
-            <Route path="*" element={<Navigate to="/app/user" replace />}/>
+            <Route path="*" element={<Navigate to="/app/condominio" replace />}/>
             </Routes>
           </RainbowKitProvider>
         </WagmiConfig>
