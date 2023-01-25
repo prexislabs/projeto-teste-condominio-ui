@@ -87,7 +87,7 @@ function User() {
       AlertLoading("Autorizando...");
       const resWait = await res.wait();
       if (resWait.status == 1) {
-        AlertSuccess("Autorizado");
+        AlertSuccess("Autorizado", "");
       }
       console.log(resWait.status);
     } catch (err) {
@@ -126,7 +126,7 @@ function User() {
       AlertLoading("Desautorizando-se");
       const resWait = await res.wait();
       if (resWait.status == 1) {
-        AlertSuccess("Desautorizado");
+        AlertSuccess("Desautorizado","");
       }
     } catch (err) {
       if (err.reason) getErrors(err.reason);
@@ -145,7 +145,7 @@ function User() {
       AlertLoading("Mudando sindico...");
       const resWait = await res.wait();
       if (resWait.status == 1) {
-        AlertSuccess("Novo sindico adicionado");
+        AlertSuccess("Novo sindico adicionado", "");
       }
     } catch (err) {
       if (err.reason) getErrors(err.reason);
@@ -164,7 +164,7 @@ function User() {
       AlertLoading("Removendo...");
       const resWait = await res.wait();
       if (resWait.status == 1) {
-        AlertSuccess("Removido");
+        AlertSuccess("Removido", "");
       }
     } catch (err) {
       if (err.reason) getErrors(err.reason);
