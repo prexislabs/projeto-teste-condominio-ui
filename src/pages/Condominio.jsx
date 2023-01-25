@@ -197,7 +197,7 @@ function User() {
     );
     try {
       const res = await contract.sindico();
-      AlertInfo("Sindico", res);
+      AlertInfo("Sindico", res == address ? "Você é o sindico" : "");
     } catch (err) {
       if (err.reason) getErrors(err.reason);
     }
