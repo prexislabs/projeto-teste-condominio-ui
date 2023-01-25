@@ -5,7 +5,13 @@ import { ethers } from "ethers";
 import { useAccount, useProvider, useSigner } from "wagmi";
 
 import condominioAbi from "../abi/condominio.json";
-import { AlertInfo, AlertLoading, AlertSuccess } from "../functions/Sweetalerts";
+import {
+  AlertFail,
+  AlertInfo,
+  AlertLoading,
+  AlertSuccess,
+} from "../functions/Sweetalerts";
+import { getErrors } from "../functions/Errors";
 
 function User() {
   // Hooks
@@ -22,21 +28,26 @@ function User() {
 
   async function adicionarUnidade(e) {
     e.preventDefault();
+    console.log(e.target.unidade.value, e.target.morador.value);
     const contract = new ethers.Contract(
       process.env.REACT_APP_CONDOMINIO_ADDRESS,
       condominioAbi,
       signer
     );
-    const res = await contract.adicionarUnidade(
-      e.target.unidade.value,
-      e.target.morador.value
-    );
-    AlertLoading('Adicionando...')
-    const resWait = await res.wait();
-    if(resWait.status == 1){
-      AlertSuccess('Adicionado ', '')
+    try {
+      const res = await contract.adicionarUnidade(
+        e.target.unidade.value,
+        e.target.morador.value
+      );
+      AlertLoading("Adicionando...");
+      const resWait = await res.wait();
+      if (resWait.status == 1) {
+        AlertSuccess("Adicionado ", "");
+      }
+      console.log(resWait.status);
+    } catch (err) {
+      if (err.reason) getErrors(err.reason);
     }
-    console.log(resWait.status);
   }
 
   async function atualizarMorador(e) {
@@ -46,16 +57,19 @@ function User() {
       condominioAbi,
       signer
     );
-    const res = await contract.atualizarMorador(
-      e.target.unidade.value,
-      e.target.morador.value
-    );
-    AlertLoading('Atualizando...')
-    const resWait = await res.wait();
-    if(resWait.status == 1){
-      AlertSuccess('Atualizado ', '')
+    try {
+      const res = await contract.atualizarMorador(
+        e.target.unidade.value,
+        e.target.morador.value
+      );
+      AlertLoading("Atualizando...");
+      const resWait = await res.wait();
+      if (resWait.status == 1) {
+        AlertSuccess("Atualizado ", "");
+      }
+    } catch (err) {
+      if (err.reason) getErrors(err.reason);
     }
-    console.log(resWait.status);
   }
 
   async function autorizarEndereco(e) {
@@ -65,16 +79,20 @@ function User() {
       condominioAbi,
       signer
     );
-    const res = await contract.autorizarEndereco(
-      e.target.unidade.value,
-      e.target.autorizado.value
-    );
-    AlertLoading('Autorizando...')
-    const resWait = await res.wait();
-    if(resWait.status == 1){
-      AlertSuccess('Autorizado')
+    try {
+      const res = await contract.autorizarEndereco(
+        e.target.unidade.value,
+        e.target.autorizado.value
+      );
+      AlertLoading("Autorizando...");
+      const resWait = await res.wait();
+      if (resWait.status == 1) {
+        AlertSuccess("Autorizado");
+      }
+      console.log(resWait.status);
+    } catch (err) {
+      if (err.reason) getErrors(err.reason);
     }
-    console.log(resWait.status);
   }
 
   async function desautorizarEndereco(e) {
@@ -84,13 +102,16 @@ function User() {
       condominioAbi,
       signer
     );
-    const res = await contract.desautorizarEndereco(e.target.unidade.value);
-    AlertLoading('Desautorizando')
-    const resWait = await res.wait();
-    if(resWait.status == 1){
-      AlertSuccess('Desautorizado', '')
+    try {
+      const res = await contract.desautorizarEndereco(e.target.unidade.value);
+      AlertLoading("Desautorizando");
+      const resWait = await res.wait();
+      if (resWait.status == 1) {
+        AlertSuccess("Desautorizado", "");
+      }
+    } catch (err) {
+      if (err.reason) getErrors(err.reason);
     }
-    console.log(resWait.status);
   }
 
   async function desautorizarSe(e) {
@@ -100,13 +121,16 @@ function User() {
       condominioAbi,
       signer
     );
-    const res = await contract.desautorizarSe(e.target.unidade.value);
-    AlertLoading('Desautorizando-se')
-    const resWait = await res.wait();
-    if(resWait.status == 1){
-      AlertSuccess('Desautorizado')
+    try {
+      const res = await contract.desautorizarSe(e.target.unidade.value);
+      AlertLoading("Desautorizando-se");
+      const resWait = await res.wait();
+      if (resWait.status == 1) {
+        AlertSuccess("Desautorizado");
+      }
+    } catch (err) {
+      if (err.reason) getErrors(err.reason);
     }
-    console.log(resWait.status);
   }
 
   async function mudarSindico(e) {
@@ -116,13 +140,16 @@ function User() {
       condominioAbi,
       signer
     );
-    const res = await contract.mudarSindico(e.target.novoSindico.value);
-    AlertLoading('Mudando sindico...')
-    const resWait = await res.wait();
-    if(resWait.status == 1){
-     AlertSuccess('Novo sindico adicionado')
+    try {
+      const res = await contract.mudarSindico(e.target.novoSindico.value);
+      AlertLoading("Mudando sindico...");
+      const resWait = await res.wait();
+      if (resWait.status == 1) {
+        AlertSuccess("Novo sindico adicionado");
+      }
+    } catch (err) {
+      if (err.reason) getErrors(err.reason);
     }
-    console.log(resWait.status);
   }
 
   async function removerUnidade(e) {
@@ -132,13 +159,16 @@ function User() {
       condominioAbi,
       signer
     );
-    const res = await contract.removerUnidade(e.target.unidade.value);
-    AlertLoading('Removendo...')
-    const resWait = await res.wait();
-    if(resWait.status == 1){
-      AlertSuccess('Removido')
+    try {
+      const res = await contract.removerUnidade(e.target.unidade.value);
+      AlertLoading("Removendo...");
+      const resWait = await res.wait();
+      if (resWait.status == 1) {
+        AlertSuccess("Removido");
+      }
+    } catch (err) {
+      if (err.reason) getErrors(err.reason);
     }
-    console.log(resWait.status);
   }
 
   // View
@@ -150,9 +180,12 @@ function User() {
       condominioAbi,
       signer
     );
-    const res = await contract.retornaVotante(e.target.votante.value);
-    AlertInfo('Votante', res)
-    console.log(res);
+    try {
+      const res = await contract.retornaVotante(e.target.votante.value);
+      AlertInfo("Votante", res);
+    } catch (err) {
+      if (err.reason) getErrors(err.reason);
+    }
   }
 
   async function sindico(e) {
@@ -162,9 +195,12 @@ function User() {
       condominioAbi,
       signer
     );
-    const res = await contract.sindico();
-    AlertInfo('Sindico', res)
-    console.log(res);
+    try {
+      const res = await contract.sindico();
+      AlertInfo("Sindico", res);
+    } catch (err) {
+      if (err.reason) getErrors(err.reason);
+    }
   }
 
   async function unidades(e) {
@@ -174,21 +210,24 @@ function User() {
       condominioAbi,
       signer
     );
-    const res = await contract.unidades(e.target.unidades.value);
-    AlertInfo('Unidades',
-    `
-    <div className="flex flex-col text-left">
-      <p>Morador: ${res[0]}</p>
+    try {
+      const res = await contract.unidades(e.target.unidades.value);
+      AlertInfo(
+        "Unidades",
+        `
+        <div className="flex flex-col text-left">
+        <p>Morador: ${res[0]}</p>
       <p>Autorizado: ${res[1]}</p>
-    </div>
-    `
-    )
-    console.log(res);
+      </div>
+      `
+      );
+    } catch (err) {
+      if (err.reason) getErrors(err.reason);
+    }
   }
 
   return (
     <div className="pt-2 pl-8">
-
       <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
         <p>Retornar Votante</p>
         <form className="flex flex-col" onSubmit={(e) => retornarVotante(e)}>
@@ -281,7 +320,10 @@ function User() {
 
       <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
         <p>Desautorizar Endereço</p>
-        <form className="flex flex-col" onSubmit={(e) => desautorizarEndereco(e)}>
+        <form
+          className="flex flex-col"
+          onSubmit={(e) => desautorizarEndereco(e)}
+        >
           <input
             type="text"
             name="unidade"
@@ -330,7 +372,6 @@ function User() {
           <button className="btn mt-2">Remover</button>
         </form>
       </div>
-
     </div>
   );
 }
