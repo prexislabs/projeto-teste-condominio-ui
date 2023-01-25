@@ -16,7 +16,7 @@ import condominioAbi from "../abi/condominio.json";
 import pleitosAbi from "../abi/pleitos.json";
 import { getErrors } from "../functions/Errors";
 
-function Mocktoken() {
+function Pleitos() {
   const provider = useProvider();
   const { data: signer, isError, isLoading } = useSigner();
 
@@ -163,7 +163,7 @@ function Mocktoken() {
   }
 
   return (
-    <div className="pt-2 pl-8">
+    <div className="pt-2">
       <div className="my-5 p-4 bg-gray-300 max-w-xs rounded-lg">
         <p>Endereço do condominio</p>
         <button className="btn w-full" onClick={() => condominio()}>
@@ -265,4 +265,4 @@ function Mocktoken() {
   );
 }
 
-export default Mocktoken;
+export default Pleitos;
