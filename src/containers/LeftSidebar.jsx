@@ -5,6 +5,8 @@ import SidebarSubmenu from './SidebarSubmenu';
 import condominioAbi from '../abi/condominio.json';
 import { useProvider, useAccount } from 'wagmi'
 import {useState, useEffect} from 'react'
+import InternalLinks from '../components/InternalLinks'
+import { reduceAddress } from '../functions/generalFunctions'
 
 
 function LeftSidebar(){
@@ -16,12 +18,7 @@ function LeftSidebar(){
     const [condominio, setCondominio] = useState();
     const [pleitos, setpleitos] = useState();
 
-    function reduceAddress(address){
-        if(!address) return
-        let firstPart = address.substr(0, 6)
-        let secondPart = address.substr(37,42)
-        return firstPart + '...' + secondPart
-    }
+
 
     async function getAllAddressess(){
         let contract = new ethers.Contract(process.env.REACT_APP_CONDOMINIO_ADDRESS, condominioAbi, provider);
@@ -34,6 +31,7 @@ function LeftSidebar(){
     useEffect(() => {
         getAllAddressess()
     },[])
+
 
     return(
         <div className="drawer-side ">
@@ -78,15 +76,9 @@ function LeftSidebar(){
 
             </ul>
                 <div className="flex flex-col justify-end"> 
-                    <a target="_blank" href={`https://goerli.etherscan.io/address/${sindico}`} className="pl-10 py-3 my-2 hover:bg-gray-300 duration-150 max-w-xs">
-                        Síndico: {reduceAddress(sindico)}
-                    </a>
-                    <a target="_blank" href={`https://goerli.etherscan.io/address/${condominio}`} className="pl-10 py-3 my-2 hover:bg-gray-300 duration-150 max-w-xs">
-                        Condomínio: {reduceAddress(condominio)}
-                    </a>
-                    <a target="_blank" href={`https://goerli.etherscan.io/address/${pleitos}`} className="pl-10 py-3 my-2 hover:bg-gray-300 duration-150 max-w-xs">
-                        Pleitos: {reduceAddress(pleitos)}
-                    </a>
+                    <InternalLinks name="Sindico" address={sindico} minimalAddress={reduceAddress(sindico)}/>
+                    <InternalLinks name="Condominio" address={process.env.REACT_APP_CONDOMINIO_ADDRESS} minimalAddress={reduceAddress(condominio)}/>
+                    <InternalLinks name="Pleitos" address={process.env.REACT_APP_PLEITOS_ADDRESS} minimalAddress={reduceAddress(pleitos)}/>
                 </div>
         </div>
     )
