@@ -195,7 +195,7 @@ export default function Autorizado() {
                     placeholder="Unidade"
                     className="my-2 input input-bordered w-full max-w-xs"
                   />
-                  <button className="btn mt-2">Desautorizar</button>
+                  <button className="btn mt-2" disabled={status != 'connected'}>Desautorizar</button>
                 </form>
               </div>
         </>

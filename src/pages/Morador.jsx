@@ -190,7 +190,7 @@ export default function Morador() {
                 placeholder="Morador"
                 className="my-2 input input-bordered w-full max-w-xs"
               />
-              <button className="btn mt-2">Autorizar</button>
+              <button className="btn mt-2" disabled={status != 'connected'}>Autorizar</button>
             </form>
           </div>
 
@@ -206,7 +206,7 @@ export default function Morador() {
                 placeholder="Unidade"
                 className="my-2 input input-bordered w-full max-w-xs"
               />
-              <button className="btn mt-2">Desautorizar</button>
+              <button className="btn mt-2" disabled={status != 'connected'}>Desautorizar</button>
             </form>
           </div>
 
@@ -219,7 +219,7 @@ export default function Morador() {
                 placeholder="Unidade"
                 className="my-2 input input-bordered w-full max-w-xs"
               />
-              <button className="btn mt-2">Desautorizar</button>
+              <button className="btn mt-2" disabled={status != 'connected'}>Desautorizar</button>
             </form>
           </div>
         </>
@@ -237,13 +237,13 @@ export default function Morador() {
                 placeholder="Votante"
                 className="my-2 input input-bordered w-full max-w-xs"
               />
-              <button className="btn mt-2">Ver votante</button>
+              <button className="btn mt-2" disabled={status != 'connected'}>Ver votante</button>
             </form>
           </div>
           <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
             <p>Sindico</p>
             <form className="flex flex-col" onSubmit={(e) => sindico(e)}>
-              <button className="btn mt-2">Ver Sindico</button>
+              <button className="btn mt-2" disabled={status != 'connected'}>Ver Sindico</button>
             </form>
           </div>
 
@@ -256,7 +256,7 @@ export default function Morador() {
                 placeholder="Unidades"
                 className="my-2 input input-bordered w-full max-w-xs"
               />
-              <button className="btn mt-2">Ver unidades</button>
+              <button className="btn mt-2" disabled={status != 'connected'}>Ver unidades</button>
             </form>
           </div>
         </>
