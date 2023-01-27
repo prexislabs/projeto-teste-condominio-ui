@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPageTitle } from "../features/common/headerSlice";
+import { setPageTitle, setAllPleitos } from "../features/common/headerSlice";
 import { ethers } from "ethers";
 import { useAccount, useProvider, useSigner } from "wagmi";
 import {
@@ -18,115 +18,24 @@ import condominioAbi from "../abi/condominio.json";
 import pleitosAbi from "../abi/pleitos.json";
 import { getErrors } from "../functions/Errors";
 
+import { reduceAddress, adicionarUnidade, unidades, removerUnidade, mudarSindico, novoPleito, pleitoId, getAllPleitos, vota } from "../functions/generalFunctions";
+
 function Pleitos() {
   const provider = useProvider();
   const { data: signer, isError, isLoading } = useSigner();
   const { address } = useAccount()
   const [amountOfPleitos, setAmountOfPleitos] = useState();
-  const [allPleitos, setAllPleitos] = useState([]);
   const [loadingLabel, setLoadingLabel] = useState('Carregando pleitos...');
+  const { allPleitos } = useSelector(state => state.header);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(setPageTitle({ title: "Pleitos" }));
-  }, []);
-
-
-  async function pleitoId() {
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_PLEITOS_ADDRESS,
-      pleitosAbi,
-      provider
-    );
-    try {
-      const res = Number(await contract.pleitoId());
-      setAmountOfPleitos(res)
-      return res;
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
-  }
-
-  async function vota(pleito) {
-    // e.preventDefault();
-
-    const inputOptions = new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          'true': 'Sim',
-          'false': 'Não'
-        })
-      }, 1000)
-    })
-    
-    const { value: votoEscolhido } = await Swal.fire({
-      title: 'Selecione seu voto:',
-      input: 'radio',
-      inputOptions: inputOptions,
-      inputValidator: (value) => {
-        if (!value) {
-          return 'Você precisa selecionar uma opção de voto!'
-        }
-      }
-    })
-
-    if(votoEscolhido == undefined) return
-
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_PLEITOS_ADDRESS,
-      pleitosAbi,
-      signer 
-    );
-    try {
-      // PleitoID, unidade, voto
-      const res = await contract.vota(pleito[0], Number(pleito[7]), votoEscolhido == 'true' ? true : false);
-      AlertLoading("Computando voto");
-      const resWait = await res.wait();
-      if (resWait.status == 1) { 
-        AlertSuccess("Voto computado","");
-        getAllPleitos();
-      }
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
-  }
-  
-  // new model functions
-
-  async function getAllPleitos(){
-    let amountOfPleitos = await pleitoId()
-    let contract = new ethers.Contract(process.env.REACT_APP_PLEITOS_ADDRESS, pleitosAbi, provider) 
-    let condominio = new ethers.Contract(process.env.REACT_APP_CONDOMINIO_ADDRESS, condominioAbi, provider)
-    let allPleitos = []
-
-
-
-    for(let i = 0; i < amountOfPleitos; i++){
-      let res = await contract.pleitos(i)
-
-      // id; // titulo; // dataCriacao; // dataLimite; // votosSim; // votosNao; 
-      let pleito = [...res]
-      pleito[0] = Number(pleito[0])
-      let data = new Date(pleito[2] * 1000)
-      data = data.toLocaleTimeString('pt-br')
-      pleito[2] = data
-      pleito[3] = Number(pleito[3])
-      pleito[4] = Number(pleito[4])
-      pleito[5] = Number(pleito[5])
-
-      let enderecoUsuario = await condominio.enderecos(address)
-      pleito[6] = await contract.votou(pleito[0],Number(enderecoUsuario[1]))
-      pleito[7] = Number(enderecoUsuario[1])
-
-      allPleitos.push(pleito) 
-  }
-     if(allPleitos.length == 0) setLoadingLabel('Nenhum pleito criado')
-      setAllPleitos(allPleitos)
-  }
+  }, []);  
 
   useEffect(() => {
-    getAllPleitos()
+    getAllPleitos(provider, address, dispatch, setAllPleitos)
   },[])
 
   return (
@@ -173,7 +82,7 @@ function Pleitos() {
             <td>{pleito[4]}</td>
             <td>{pleito[5]}</td>
             <td>
-              <button disabled={Date.now() > pleito[3] || pleito[6] == true} className="hover:scale-110 duration-150 cursor-pointer btn btn-sm" onClick={() => vota(pleito)}>
+              <button disabled={Date.now() > pleito[3] || pleito[6] == true} className="hover:scale-110 duration-150 cursor-pointer btn btn-sm" onClick={() => vota(pleito, signer)}>
                 {pleito[6] == true ? 'Votado' : 'Votar'}
               </button>
             </td>

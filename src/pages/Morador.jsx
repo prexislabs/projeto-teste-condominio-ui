@@ -5,6 +5,7 @@ import { setPageTitle } from "../features/common/headerSlice";
 import { ethers } from "ethers";
 import { useAccount, useProvider, useSigner } from "wagmi";
 
+import { unidades, autorizarEndereco, desautorizarEndereco, desautorizarSe, sindico, retornarVotante } from "../functions/generalFunctions";
 import condominioAbi from "../abi/condominio.json";
 import {
   AlertFail,
@@ -23,120 +24,6 @@ export default function Morador() {
 
   function changeView(view) {
     setView(view);
-  }
-
-  async function autorizarEndereco(e) {
-    e.preventDefault();
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_CONDOMINIO_ADDRESS,
-      condominioAbi,
-      signer
-    );
-    try {
-      const res = await contract.autorizarEndereco(
-        e.target.unidade.value,
-        e.target.autorizado.value
-      );
-      AlertLoading("Autorizando...");
-      const resWait = await res.wait();
-      if (resWait.status == 1) {
-        AlertSuccess("Autorizado", "");
-      }
-      console.log(resWait.status);
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
-  }
-
-  async function desautorizarEndereco(e) {
-    e.preventDefault();
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_CONDOMINIO_ADDRESS,
-      condominioAbi,
-      signer
-    );
-    try {
-      const res = await contract.desautorizarEndereco(e.target.unidade.value);
-      AlertLoading("Desautorizando");
-      const resWait = await res.wait();
-      if (resWait.status == 1) {
-        AlertSuccess("Desautorizado", "");
-      }
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
-  }
-
-  async function desautorizarSe(e) {
-    e.preventDefault();
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_CONDOMINIO_ADDRESS,
-      condominioAbi,
-      signer
-    );
-    try {
-      const res = await contract.desautorizarSe(e.target.unidade.value);
-      AlertLoading("Desautorizando-se");
-      const resWait = await res.wait();
-      if (resWait.status == 1) {
-        AlertSuccess("Desautorizado", "");
-      }
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
-  }
-
-  async function retornarVotante(e) {
-    e.preventDefault();
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_CONDOMINIO_ADDRESS,
-      condominioAbi,
-      signer
-    );
-    try {
-      const res = await contract.retornaVotante(e.target.votante.value);
-      AlertInfo("Votante", res);
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
-  }
-
-  async function sindico(e) {
-    e.preventDefault();
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_CONDOMINIO_ADDRESS,
-      condominioAbi,
-      signer
-    );
-    try {
-      const res = await contract.sindico();
-      AlertInfo("Sindico", res == address ? "Você é o sindico" : "");
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
-  }
-
-  async function unidades(e) {
-    e.preventDefault();
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_CONDOMINIO_ADDRESS,
-      condominioAbi,
-      signer
-    );
-    try {
-      const res = await contract.unidades(e.target.unidades.value);
-      AlertInfo(
-        "Unidades",
-        `
-        <div className="flex flex-col text-left">
-        <p>Morador: ${res[0]}</p>
-      <p>Autorizado: ${res[1]}</p>
-      </div>
-      `
-      );
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
   }
 
   return (
@@ -176,7 +63,7 @@ export default function Morador() {
             <p>Autorizar Endereço</p>
             <form
               className="flex flex-col"
-              onSubmit={(e) => autorizarEndereco(e)}
+              onSubmit={(e) => autorizarEndereco(e, signer)}
             >
               <input
                 type="text"
@@ -198,7 +85,7 @@ export default function Morador() {
             <p>Desautorizar Endereço</p>
             <form
               className="flex flex-col"
-              onSubmit={(e) => desautorizarEndereco(e)}
+              onSubmit={(e) => desautorizarEndereco(e, signer)}
             >
               <input
                 type="text"
@@ -212,7 +99,7 @@ export default function Morador() {
 
           <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
             <p>Desautorizar-se</p>
-            <form className="flex flex-col" onSubmit={(e) => desautorizarSe(e)}>
+            <form className="flex flex-col" onSubmit={(e) => desautorizarSe(e, signer)}>
               <input
                 type="text"
                 name="unidade"
@@ -229,7 +116,7 @@ export default function Morador() {
             <p>Retornar Votante</p>
             <form
               className="flex flex-col"
-              onSubmit={(e) => retornarVotante(e)}
+              onSubmit={(e) => retornarVotante(e, signer)}
             >
               <input
                 type="text"
@@ -242,14 +129,14 @@ export default function Morador() {
           </div>
           <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
             <p>Sindico</p>
-            <form className="flex flex-col" onSubmit={(e) => sindico(e)}>
+            <form className="flex flex-col" onSubmit={(e) => sindico(e,address,signer)}>
               <button className="btn mt-2" disabled={status != 'connected'}>Ver Sindico</button>
             </form>
           </div>
 
           <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
             <p>Unidades</p>
-            <form className="flex flex-col" onSubmit={(e) => unidades(e)}>
+            <form className="flex flex-col" onSubmit={(e) => unidades(e, signer)}>
               <input
                 type="text"
                 name="unidades"
