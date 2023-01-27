@@ -166,7 +166,7 @@ export async function getAllPleitos(provider, address, dispatch, setAllPleitos, 
       pleito[4] = Number(pleito[4])
       pleito[5] = Number(pleito[5])
 
-      let enderecoUsuario = await condominio.enderecos(address)
+      let enderecoUsuario = await condominio.moradores(address)
       pleito[6] = await contract.votou(pleito[0],Number(enderecoUsuario))
       pleito[7] = Number(enderecoUsuario)
 
