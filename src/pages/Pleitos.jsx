@@ -19,7 +19,7 @@ function Pleitos() {
 
   useEffect(() => {
     getAllPleitos(provider, address, dispatch, setAllPleitos, setAmountOfPleitos)
-  },[])
+  },[address])
 
 
   return (
