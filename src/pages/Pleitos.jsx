@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setPageTitle } from "../features/common/headerSlice";
 import { ethers } from "ethers";
 import { useAccount, useProvider, useSigner } from "wagmi";
@@ -10,6 +10,8 @@ import {
   AlertQuestion,
   AlertSuccess,
 } from "../functions/Sweetalerts";
+import Countdown from 'react-countdown';
+import Swal from 'sweetalert2';
 
 // ABI
 import condominioAbi from "../abi/condominio.json";
@@ -19,8 +21,10 @@ import { getErrors } from "../functions/Errors";
 function Pleitos() {
   const provider = useProvider();
   const { data: signer, isError, isLoading } = useSigner();
+  const { address } = useAccount()
   const [amountOfPleitos, setAmountOfPleitos] = useState();
-  const [allPleitos, setAllPleitos] = useState();
+  const [allPleitos, setAllPleitos] = useState([]);
+  const [loadingLabel, setLoadingLabel] = useState('Carregando pleitos...');
 
   const dispatch = useDispatch();
 
@@ -28,24 +32,6 @@ function Pleitos() {
     dispatch(setPageTitle({ title: "Pleitos" }));
   }, []);
 
-  // Functions
-  async function condominio() {
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_PLEITOS_ADDRESS,
-      pleitosAbi,
-      provider
-    );
-    try {
-      const res = await contract.condominio();
-      AlertInfo(
-        "Endereço do condominio",
-        `<p className="text-sm font-mono">${res}</p>`
-      );
-      console.log(res);
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
-  }
 
   async function pleitoId() {
     const contract = new ethers.Contract(
@@ -57,111 +43,49 @@ function Pleitos() {
       const res = Number(await contract.pleitoId());
       setAmountOfPleitos(res)
       return res;
-      // AlertInfo(
-      //   "ID do Pleito",
-      //   `<p className="font-mono text-3xl">${res.toString()}</p>`
-      // );
     } catch (err) {
       if (err.reason) getErrors(err.reason);
     }
   }
 
-  async function pleitos(e) {
-    e.preventDefault();
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_PLEITOS_ADDRESS,
-      pleitosAbi,
-      provider
-    );
-    try {
-      const res = await contract.pleitos(e.target.id.value);
+  async function vota(pleito) {
+    // e.preventDefault();
 
-      if (res[1] == "") return AlertInfo("Não encontrado");
-
-      let dataCriacao = Number(res[2]) * 1000;
-      dataCriacao = new Date(dataCriacao);
-      dataCriacao = dataCriacao.toLocaleString("pt-br");
-
-      let dataLimite = Number(res[3]) * 1000;
-      dataLimite = new Date(dataLimite);
-      dataLimite = dataLimite.toLocaleString("pt-br");
-
-      console.log(res)
-
-      // AlertInfo(
-      //   "Pleito",
-      //   `
-      //   <div className="flex flex-col text-left bg-slate-400">
-      //   <p>ID: ${res[0]}</p>
-      //   <p>Titulo: ${res[1]}</p>
-      //   <p>Data de criação: ${dataCriacao}</p>
-      //   <p>Data Limite: ${dataLimite}</p>
-      //   <p>Votos Sim: ${res[4]}</p>
-      //   <p>Votos Não: ${res[5]}</p>
-      //   </div>
-      //   `
-      // );
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
-  }
-
-  async function resultado(e) {
-    e.preventDefault();
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_PLEITOS_ADDRESS,
-      pleitosAbi,
-      provider
-    );
-    try {
-      const res = await contract.resultado(Number(e.target.id.value));
-      console.log(res);
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
-  }
-
-  async function novoPleito(e) {
-    e.preventDefault();
-    const contract = new ethers.Contract(
-      process.env.REACT_APP_PLEITOS_ADDRESS,
-      pleitosAbi,
-      signer
-    );
-    try {
-      const res = await contract.novoPleito(
-        e.target.titulo.value,
-        Number(e.target.duracao.value)
-      );
-      AlertLoading("Adicionando...", "");
-      const resWait = await res.wait();
-      if (resWait.status == 1) {
-        AlertSuccess("Adicionado", "");
+    const inputOptions = new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          'true': 'Sim',
+          'false': 'Não'
+        })
+      }, 1000)
+    })
+    
+    const { value: votoEscolhido } = await Swal.fire({
+      title: 'Selecione seu voto:',
+      input: 'radio',
+      inputOptions: inputOptions,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Você precisa selecionar uma opção de voto!'
+        }
       }
-      console.log(resWait);
-    } catch (err) {
-      if (err.reason) getErrors(err.reason);
-    }
-  }
+    })
 
-  async function vota(e) {
-    e.preventDefault();
+    if(votoEscolhido == undefined) return
 
     const contract = new ethers.Contract(
       process.env.REACT_APP_PLEITOS_ADDRESS,
       pleitosAbi,
-      signer
+      signer 
     );
     try {
-      const res = await contract.vota(
-        e.target.pleitoId.value,
-        Number(e.target.unidade.value),
-        e.target.voto.value
-      );
-      AlertLoading("Criando votação");
+      // PleitoID, unidade, voto
+      const res = await contract.vota(pleito[0], Number(pleito[7]), votoEscolhido == 'true' ? true : false);
+      AlertLoading("Computando voto");
       const resWait = await res.wait();
-      if (resWait.status == 1) {
-        AlertSuccess("Votação criada");
+      if (resWait.status == 1) { 
+        AlertSuccess("Voto computado","");
+        getAllPleitos();
       }
     } catch (err) {
       if (err.reason) getErrors(err.reason);
@@ -172,22 +96,33 @@ function Pleitos() {
 
   async function getAllPleitos(){
     let amountOfPleitos = await pleitoId()
-    let contract = new ethers.Contract(process.env.REACT_APP_PLEITOS_ADDRESS, pleitosAbi, provider)
+    let contract = new ethers.Contract(process.env.REACT_APP_PLEITOS_ADDRESS, pleitosAbi, provider) 
+    let condominio = new ethers.Contract(process.env.REACT_APP_CONDOMINIO_ADDRESS, condominioAbi, provider)
     let allPleitos = []
+
+
 
     for(let i = 0; i < amountOfPleitos; i++){
       let res = await contract.pleitos(i)
+
       // id; // titulo; // dataCriacao; // dataLimite; // votosSim; // votosNao; 
       let pleito = [...res]
       pleito[0] = Number(pleito[0])
-      pleito[2] = Number(pleito[2])
+      let data = new Date(pleito[2] * 1000)
+      data = data.toLocaleTimeString('pt-br')
+      pleito[2] = data
       pleito[3] = Number(pleito[3])
       pleito[4] = Number(pleito[4])
-      pleito[5] = Number(pleito[5])    
-      console.log(pleito)
-      allPleitos.push(pleito)
+      pleito[5] = Number(pleito[5])
+
+      let enderecoUsuario = await condominio.enderecos(address)
+      pleito[6] = await contract.votou(pleito[0],Number(enderecoUsuario[1]))
+      pleito[7] = Number(enderecoUsuario[1])
+
+      allPleitos.push(pleito) 
   }
-    setAllPleitos(allPleitos)
+     if(allPleitos.length == 0) setLoadingLabel('Nenhum pleito criado')
+      setAllPleitos(allPleitos)
   }
 
   useEffect(() => {
@@ -196,6 +131,18 @@ function Pleitos() {
 
   return (
     <div className="pt-2">
+
+    <div className="flex justify-center"> 
+    { 
+      allPleitos?.length == 0 ?
+      <h1 className={`${loadingLabel.includes('Carregando') ? 'loading' : null} btn bg-transparent border-none text-black`}>{loadingLabel}</h1>
+      :
+      null
+    }
+    </div>
+
+    {
+      allPleitos?.length == 0 ? null :      
       <div className="overflow-x-auto">
   <table className="table table-zebra w-full">
     <thead>
@@ -206,7 +153,7 @@ function Pleitos() {
         <th>Contagem</th>
         <th>Votos SIM</th>
         <th>Votos NÃO</th>
-        <th>Voto</th>
+        <th>Voto</th> 
         <th>Resultado</th>
       </tr>
     </thead>
@@ -215,20 +162,31 @@ function Pleitos() {
       {allPleitos?.map((pleito, key) => {
         return (
           <tr key={key}>
-            <th>{pleito[0]}</th>
-            <td>{pleito[1]}</td>
+            <th>{pleito[0]}</th> 
+            <td>{pleito[1]}</td> 
             <td>{pleito[2]}</td>
-            <td>{pleito[3]}</td>
+            <td>
+              <Countdown date={pleito[3]}>
+                <p className="">Finalizado</p>
+              </Countdown>
+            </td>
             <td>{pleito[4]}</td>
             <td>{pleito[5]}</td>
             <td>
-              <div className="hover:scale-110 duration-150 cursor-pointer">
-                <img width={30} src="https://cdn-icons-png.flaticon.com/512/3468/3468573.png" alt="votar" />
-              </div>
+              <button disabled={Date.now() > pleito[3] || pleito[6] == true} className="hover:scale-110 duration-150 cursor-pointer btn btn-sm" onClick={() => vota(pleito)}>
+                {pleito[6] == true ? 'Votado' : 'Votar'}
+              </button>
             </td>
             <td>
-              <img width={30} src="https://cdn-icons-png.flaticon.com/512/4436/4436481.png" alt="aprovado" />
-              {/* <img width={30} src="https://cdn-icons-png.flaticon.com/512/6711/6711656.png" alt="negado" /> */}
+              {
+                Date.now() < pleito[3] ? 
+                <img width={30} src="https://cdn-icons-png.flaticon.com/512/4394/4394939.png"/> :
+                pleito[4] == pleito[5] ? 
+                <img width={30} src="https://cdn-icons-png.flaticon.com/512/4604/4604814.png"/> :
+                pleito[4] > pleito[5] ? 
+                <img width={30} src="https://cdn-icons-png.flaticon.com/512/4436/4436481.png" alt="aprovado" /> : 
+                <img width={30} src="https://cdn-icons-png.flaticon.com/512/6711/6711656.png" alt="negado" /> 
+              }
             </td>
           </tr>
         )
@@ -236,6 +194,9 @@ function Pleitos() {
     </tbody>
   </table>
 </div>
+    }
+
+
     </div>
   );
 }
