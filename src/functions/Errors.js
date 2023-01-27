@@ -1,8 +1,6 @@
 import { AlertFail } from "./Sweetalerts";
 
-export function getErrors(error){
-    console.log('texto do erro', error)
-    
+export function getErrors(error){    
     if(error.includes('Somente sindico')){
         return AlertFail('Somente sindicos podem executar essa ação', '')
     }
