@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPageTitle } from "../features/common/headerSlice";
 import { ethers } from "ethers";
 import { useAccount, useProvider, useSigner } from "wagmi";
+import pleitosAbi from '../abi/pleitos.json'
+import { reduceAddress } from "../functions/generalFunctions";
 
 import condominioAbi from "../abi/condominio.json";
 import {
@@ -20,6 +22,8 @@ export default function Sindico() {
   const { address, status } = useAccount();
   const { data: signer, isError, isLoading } = useSigner();
   const dispatch = useDispatch();
+
+  const addressZero = '0x0000000000000000000000000000000000000000'
 
   function changeView(view) {
     setView(view);
@@ -58,14 +62,15 @@ export default function Sindico() {
     );
     try {
       const res = await contract.unidades(e.target.unidades.value);
+      if(res[0] == addressZero) return AlertInfo("Unidade não existe")
       AlertInfo(
         "Unidades",
         `
         <div className="flex flex-col text-left">
-        <p>Morador: ${res[0]}</p>
-      <p>Autorizado: ${res[1]}</p>
+        <p>Morador: ${reduceAddress(res[0])}</p>
+      <p>Autorizado: ${res[1] == addressZero ? 'Não cadastrado' : res[1]}</p>
       </div>
-      `
+      ` 
       );
     } catch (err) {
       if (err.reason) getErrors(err.reason);
@@ -110,6 +115,26 @@ export default function Sindico() {
     }
   }
 
+  async function novoPleito(e) {
+    e.preventDefault();
+    const contract = new ethers.Contract(
+      process.env.REACT_APP_PLEITOS_ADDRESS,
+      pleitosAbi,
+      signer
+    );    
+
+    let tempo = Math.floor(Date.now() / 1000) + Number(e.target.duracao.value)
+
+    try {
+      const res = await contract.novoPleito(e.target.titulo.value,tempo * 1000);
+      AlertLoading("Criando novo pleito...", "");
+      const resWait = await res.wait();
+      if (resWait.status == 1) AlertSuccess("Pleito criado", "");
+    } catch (err) {
+      if (err.reason) getErrors(err.reason);
+    }
+  }
+
   return (
     <div className="pt-2 pl-8">
       <div className="navbar bg-base-100 rounded-lg flex">
@@ -140,7 +165,21 @@ export default function Sindico() {
       </div>
 
       {view == "pleitos" ? (
-        <Pleitos />
+        <> 
+          <Pleitos />
+
+          <div className="divider"></div>  
+
+          <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
+            <p>Criar novo pleito</p>
+            <form className="flex flex-col" onSubmit={(e) => novoPleito(e)}>
+              <input type="text" name="titulo" placeholder="Titulo" className="my-2 input input-bordered w-full max-w-xs"/>
+              <input type="text" name="duracao" placeholder="Duração"  className="my-2 input input-bordered w-full max-w-xs"/>
+              <button className="btn mt-2" disabled={status != 'connected'}>Criar novo pleito</button>
+            </form>
+          </div>
+          
+        </>
       ) : view == "unidades" ? (
         <>
           <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
@@ -161,7 +200,7 @@ export default function Sindico() {
                 placeholder="Morador"
                 className="my-2 input input-bordered w-full max-w-xs"
               />
-              <button className="btn mt-2">Adicionar</button>
+              <button className="btn mt-2" disabled={status != 'connected'}>Adicionar</button>
             </form>
           </div>
 
@@ -174,7 +213,7 @@ export default function Sindico() {
                 placeholder="Unidade"
                 className="my-2 input input-bordered w-full max-w-xs"
               />
-              <button className="btn mt-2">Remover</button>
+              <button className="btn mt-2" disabled={status != 'connected'}>Remover</button>
             </form>
           </div>
 
@@ -187,7 +226,7 @@ export default function Sindico() {
                 placeholder="Unidades"
                 className="my-2 input input-bordered w-full max-w-xs"
               />
-              <button className="btn mt-2">Ver unidades</button>
+              <button className="btn mt-2" disabled={status != 'connected'}>Ver unidades</button>
             </form>
           </div>
 
@@ -204,7 +243,7 @@ export default function Sindico() {
                     placeholder="Novo sindico"
                     className="my-2 input input-bordered w-full max-w-xs"
                   />
-                  <button className="btn mt-2">Mudar</button>
+                  <button className="btn mt-2" disabled={status != 'connected'}>Mudar</button>
                 </form>
               </div>
         </div>
