@@ -9,7 +9,8 @@ export const headerSlice = createSlice({
         newNotificationStatus : 1,   // to check the notification type -  success/ error/ info
         userBalance: 0,
         allPleitos: [],
-        sindicoAddress: '0x0000000000000000000000000000000000000000'
+        sindicoAddress: '0x0000000000000000000000000000000000000000',
+        amountOfPleitos: 'loading',
     },
     reducers: {
         setPageTitle: (state, action) => {
@@ -35,10 +36,14 @@ export const headerSlice = createSlice({
 
         setSindico: (state, action) => {
             state.sindicoAddress = action.payload
+        },
+
+        setAmountOfPleitos: (state, action) => {
+            state.amountOfPleitos = action.payload
         }
     }
 })
 
-export const { setPageTitle, removeNotificationMessage, showNotification, setUserBalance, setAllPleitos, setSindico } = headerSlice.actions
+export const { setPageTitle, removeNotificationMessage, showNotification, setUserBalance, setAllPleitos, setSindico, setAmountOfPleitos } = headerSlice.actions
 
 export default headerSlice.reducer
