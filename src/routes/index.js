@@ -2,7 +2,6 @@
 
 import { lazy } from 'react'
 
-const Condominio = lazy(() => import('../pages/Condominio'))
 const Pleitos = lazy(() => import('../pages/Pleitos'))
 
 const Sindico = lazy(() => import('../pages/Sindico'))
