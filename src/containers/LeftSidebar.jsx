@@ -7,25 +7,23 @@ import { useProvider, useAccount } from 'wagmi'
 import {useState, useEffect} from 'react'
 import InternalLinks from '../components/InternalLinks'
 import { reduceAddress } from '../functions/generalFunctions'
-
+import { useSelector, useDispatch } from 'react-redux'
+import { setSindico } from '../features/common/headerSlice'
 
 function LeftSidebar(){
     const location = useLocation();
     const provider = useProvider();
     const { status } = useAccount()
+    const dispatch = useDispatch();
 
-    const [sindico, setSindico] = useState();
-    const [condominio, setCondominio] = useState();
-    const [pleitos, setpleitos] = useState();
+    const { sindicoAddress, condominioAddress, pleitosAddress } = useSelector(state => state.header)
 
 
 
     async function getAllAddressess(){
         let contract = new ethers.Contract(process.env.REACT_APP_CONDOMINIO_ADDRESS, condominioAbi, provider);
         let res = await contract.sindico();      
-        setSindico((res))
-        setCondominio((process.env.REACT_APP_CONDOMINIO_ADDRESS))
-        setpleitos((process.env.REACT_APP_PLEITOS_ADDRESS))
+        dispatch(setSindico(res))
     }
 
     useEffect(() => {
@@ -76,9 +74,9 @@ function LeftSidebar(){
 
             </ul>
                 <div className="flex flex-col justify-end"> 
-                    <InternalLinks name="Sindico" address={sindico} minimalAddress={reduceAddress(sindico)}/>
-                    <InternalLinks name="Condominio" address={process.env.REACT_APP_CONDOMINIO_ADDRESS} minimalAddress={reduceAddress(condominio)}/>
-                    <InternalLinks name="Pleitos" address={process.env.REACT_APP_PLEITOS_ADDRESS} minimalAddress={reduceAddress(pleitos)}/>
+                    <InternalLinks name="Sindico" address={sindicoAddress} minimalAddress={reduceAddress(sindicoAddress)}/>
+                    <InternalLinks name="Condominio" address={process.env.REACT_APP_CONDOMINIO_ADDRESS} minimalAddress={reduceAddress(process.env.REACT_APP_CONDOMINIO_ADDRESS)}/>
+                    <InternalLinks name="Pleitos" address={process.env.REACT_APP_PLEITOS_ADDRESS} minimalAddress={reduceAddress(process.env.REACT_APP_PLEITOS_ADDRESS)}/>
                 </div>
         </div>
     )
