@@ -24,13 +24,7 @@ const routes = [
     path: '/app/autorizado',
     icon: <img width={25} src="https://cdn-icons-png.flaticon.com/512/6214/6214954.png"/>, 
     name: 'Autorizado',
-  },
-  // {
-  //   path: '/app/mocktoken',
-  //   icon: <Dolar className={iconClasses}/>, 
-  //   name: 'Mock Token',
-  // }
-  
+  }
 ]
 
 export default routes
