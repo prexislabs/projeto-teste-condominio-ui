@@ -138,6 +138,10 @@ export async function pleitoId(provider) {
   }
 
 export async function getAllPleitos(provider, address, dispatch, setAllPleitos, setAmountOfPleitos){
+
+    if(!address){
+      address = addressZero
+    }
       
     let customHttpProvider = new ethers.providers.JsonRpcProvider('https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161');
     let amountOfPleitos = await pleitoId(provider)
