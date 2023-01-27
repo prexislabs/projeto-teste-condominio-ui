@@ -6,7 +6,7 @@ import { ethers } from "ethers";
 import { useAccount, useProvider, useSigner } from "wagmi";
 import pleitosAbi from '../abi/pleitos.json'
 import { reduceAddress, adicionarUnidade, unidades, removerUnidade, mudarSindico, novoPleito, pleitoId, getAllPleitos } from "../functions/generalFunctions";
-import { setAllPleitos, setSindico } from "../features/common/headerSlice";
+import { setAllPleitos, setSindico, setAmountOfPleitos } from "../features/common/headerSlice";
 
 import condominioAbi from "../abi/condominio.json";
 import {
@@ -66,7 +66,7 @@ export default function Sindico() {
           <div className="my-5 bg-slate-200 p-5 rounded-lg max-w-xs">
             <p>Criar novo pleito</p>
             {/* e, address, dispatch, signer, setAllPleitos */}
-            <form className="flex flex-col" onSubmit={(e) => novoPleito(e, address, dispatch, setAllPleitos, signer)}>
+            <form className="flex flex-col" onSubmit={(e) => novoPleito(e, address, dispatch, setAllPleitos, setAmountOfPleitos, signer)}>
               <input type="text" name="titulo" placeholder="Titulo" className="my-2 input input-bordered w-full max-w-xs"/>
               <input type="text" name="duracao" placeholder="Duração"  className="my-2 input input-bordered w-full max-w-xs"/>
               <button className="btn mt-2" disabled={status != 'connected'}>Criar novo pleito</button>
