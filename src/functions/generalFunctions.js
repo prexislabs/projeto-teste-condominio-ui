@@ -31,7 +31,6 @@ export async function adicionarUnidade(e, signer) {
       if (resWait.status == 1) {
         AlertSuccess("Adicionado ", "");
       }
-      console.log(resWait.status);
     } catch (err) {
       if (err.reason) getErrors(err.reason);
     }
@@ -100,7 +99,7 @@ export async function mudarSindico(e, dispatch, setSindico, signer) {
     }
   }
 
-export async function novoPleito(e, address, dispatch,setAllPleitos, signer) {
+export async function novoPleito(e, address, dispatch,setAllPleitos, setAmountOfPleitos, signer) {
     e.preventDefault();
     const contract = new ethers.Contract(
       process.env.REACT_APP_PLEITOS_ADDRESS,
@@ -115,7 +114,7 @@ export async function novoPleito(e, address, dispatch,setAllPleitos, signer) {
       AlertLoading("Criando novo pleito...", "");
       const resWait = await res.wait();
       if (resWait.status == 1) AlertSuccess("Pleito criado", "");
-      getAllPleitos(signer, address, dispatch, setAllPleitos);
+      getAllPleitos(signer, address, dispatch, setAllPleitos, setAmountOfPleitos);
     } catch (err) {
       if (err.reason) getErrors(err.reason);
     }
@@ -138,8 +137,8 @@ export async function pleitoId(provider) {
     }
   }
 
-export async function getAllPleitos(provider, address, dispatch, setAllPleitos){
-    
+export async function getAllPleitos(provider, address, dispatch, setAllPleitos, setAmountOfPleitos){
+      
     let customHttpProvider = new ethers.providers.JsonRpcProvider('https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161');
     let amountOfPleitos = await pleitoId(provider)
 
@@ -149,8 +148,15 @@ export async function getAllPleitos(provider, address, dispatch, setAllPleitos){
 
     for(let i = 0; i < amountOfPleitos; i++){
       let res = await contract.pleitos(i)
+      // id; 0
+      // titulo;1 
+      // dataCriacao;2 
+      // dataLimite; 3
+      // votosSim; 4
+      // votosNao; 5
+      // votou; 6
+      // unidade; 7
 
-      // id; // titulo; // dataCriacao; // dataLimite; // votosSim; // votosNao; 
       let pleito = [...res]
       pleito[0] = Number(pleito[0])
       let data = new Date(pleito[2] * 1000)
@@ -161,15 +167,20 @@ export async function getAllPleitos(provider, address, dispatch, setAllPleitos){
       pleito[5] = Number(pleito[5])
 
       let enderecoUsuario = await condominio.enderecos(address)
-      pleito[6] = await contract.votou(pleito[0],Number(enderecoUsuario[1]))
-      pleito[7] = Number(enderecoUsuario[1])
+      pleito[6] = await contract.votou(pleito[0],Number(enderecoUsuario))
+      pleito[7] = Number(enderecoUsuario)
 
       allPleitos.push(pleito) 
   }
       dispatch(setAllPleitos(allPleitos))
+      if(allPleitos.length == 0){
+        dispatch(setAmountOfPleitos(0))
+      }else{
+        dispatch(setAmountOfPleitos(allPleitos.length))
+      }
   }
 
-export async function vota(pleito, signer) {
+export async function vota(pleito, signer, address, dispatch, setAllPleitos, setAmountOfPleitos) {
     // e.preventDefault();
 
     const inputOptions = new Promise((resolve) => {
@@ -206,7 +217,7 @@ export async function vota(pleito, signer) {
       const resWait = await res.wait();
       if (resWait.status == 1) { 
         AlertSuccess("Voto computado","");
-        getAllPleitos();
+        getAllPleitos(signer, address, dispatch, setAllPleitos, setAmountOfPleitos, );
       }
     } catch (err) {
       if (err.reason) getErrors(err.reason);
@@ -230,7 +241,6 @@ export async function autorizarEndereco(e, signer) {
       if (resWait.status == 1) {
         AlertSuccess("Autorizado", "");
       }
-      console.log(resWait.status);
     } catch (err) {
       if (err.reason) getErrors(err.reason);
     }
@@ -283,7 +293,7 @@ export async function retornarVotante(e, signer) {
     );
     try {
       const res = await contract.retornaVotante(e.target.votante.value);
-      AlertInfo("Votante", reduceAddress(res));
+      AlertInfo(res == addressZero ? "Não existem votantes nesta unidade" : reduceAddress(res), "")
     } catch (err) {
       if (err.reason) getErrors(err.reason);
     }
