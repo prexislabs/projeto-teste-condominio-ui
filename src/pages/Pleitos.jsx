@@ -1,32 +1,15 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPageTitle, setAllPleitos } from "../features/common/headerSlice";
-import { ethers } from "ethers";
+import { setPageTitle, setAllPleitos, setAmountOfPleitos } from "../features/common/headerSlice";
 import { useAccount, useProvider, useSigner } from "wagmi";
-import {
-  AlertFail,
-  AlertInfo,
-  AlertLoading,
-  AlertQuestion,
-  AlertSuccess,
-} from "../functions/Sweetalerts";
 import Countdown from 'react-countdown';
-import Swal from 'sweetalert2';
-
-// ABI
-import condominioAbi from "../abi/condominio.json";
-import pleitosAbi from "../abi/pleitos.json";
-import { getErrors } from "../functions/Errors";
-
-import { reduceAddress, adicionarUnidade, unidades, removerUnidade, mudarSindico, novoPleito, pleitoId, getAllPleitos, vota } from "../functions/generalFunctions";
+import { getAllPleitos, vota } from "../functions/generalFunctions";
 
 function Pleitos() {
   const provider = useProvider();
   const { data: signer, isError, isLoading } = useSigner();
   const { address } = useAccount()
-  const [amountOfPleitos, setAmountOfPleitos] = useState();
-  const [loadingLabel, setLoadingLabel] = useState('Carregando pleitos...');
-  const { allPleitos } = useSelector(state => state.header);
+  const { allPleitos, amountOfPleitos } = useSelector(state => state.header);
 
   const dispatch = useDispatch();
 
@@ -35,20 +18,26 @@ function Pleitos() {
   }, []);  
 
   useEffect(() => {
-    getAllPleitos(provider, address, dispatch, setAllPleitos)
+    getAllPleitos(provider, address, dispatch, setAllPleitos, setAmountOfPleitos)
   },[])
+
 
   return (
     <div className="pt-2">
 
-    <div className="flex justify-center"> 
-    { 
-      allPleitos?.length == 0 ?
-      <h1 className={`${loadingLabel.includes('Carregando') ? 'loading' : null} btn bg-transparent border-none text-black`}>{loadingLabel}</h1>
-      :
+    { amountOfPleitos == 'loading' || amountOfPleitos == 0 ?     
+      <div className="flex justify-center"> 
+        <h1 className={`${amountOfPleitos != 0 ? 'loading' : null} btn bg-transparent border-none text-black`}>
+        { 
+          amountOfPleitos == 'loading' ? "Carregando pleitos" : 
+          amountOfPleitos == 0 ? "Nenhum pleito encontrado" :
+          null
+        }
+        </h1>
+      </div>
+      : 
       null
-    }
-    </div>
+    }  
 
     {
       allPleitos?.length == 0 ? null :      
@@ -82,7 +71,7 @@ function Pleitos() {
             <td>{pleito[4]}</td>
             <td>{pleito[5]}</td>
             <td>
-              <button disabled={Date.now() > pleito[3] || pleito[6] == true} className="hover:scale-110 duration-150 cursor-pointer btn btn-sm" onClick={() => vota(pleito, signer)}>
+              <button disabled={Date.now() > pleito[3] || pleito[6] == true} className="hover:scale-110 duration-150 cursor-pointer btn btn-sm" onClick={() => vota(pleito, signer, address, dispatch, setAllPleitos, setAmountOfPleitos)}>
                 {pleito[6] == true ? 'Votado' : 'Votar'}
               </button>
             </td>
