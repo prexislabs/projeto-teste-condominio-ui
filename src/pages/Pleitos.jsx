@@ -27,7 +27,7 @@ function Pleitos() {
 
     { amountOfPleitos == 'loading' || amountOfPleitos == 0 ?     
       <div className="flex justify-center"> 
-        <h1 className={`${amountOfPleitos != 0 ? 'loading' : null} btn bg-transparent border-none text-black`}>
+        <h1 className={`${amountOfPleitos != 0 ? 'loading' : null} btn cursor-default bg-transparent border-none hover:bg-transparent text-black`}>
         { 
           amountOfPleitos == 'loading' ? "Carregando pleitos" : 
           amountOfPleitos == 0 ? "Nenhum pleito encontrado" :
