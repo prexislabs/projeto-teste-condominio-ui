@@ -9,7 +9,7 @@ import {
 import { themeChange } from "theme-change";
 import "@rainbow-me/rainbowkit/styles.css";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { configureChains, createClient, WagmiConfig } from "wagmi";
+import { configureChains, createClient, goerli, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { mainnet } from "wagmi/chains";
 
@@ -20,37 +20,8 @@ const Layout = lazy(() => import("./containers/Layout"));
 
 // Rainbowkit
 
-const customGoerli = {
-  id: 5,
-  name: "Goerli",
-  network: "Ethereum",
-  iconUrl: ethimg,
-  iconBackground: "#fff",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Ethereum",
-    symbol: "ETH",
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Goerli blockexplorer",
-      url: "https://goerli.etherscan.io/",
-    },
-    etherscan: {
-      name: "Goerli blockexplorer",
-      url: "https://goerli.etherscan.io/",
-    },
-  },
-  testnet: false,
-};
-
 const { chains, provider } = configureChains(
-  [process.env.REACT_APP_NETWORK == "mainnet" ? mainnet : customGoerli],
+  [process.env.REACT_APP_NETWORK == "mainnet" ? mainnet : goerli],
   [publicProvider()]
 );
 
